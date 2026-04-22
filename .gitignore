@@ -6,8 +6,21 @@ dist/
 wheels/
 *.egg-info
 
+# IDE
+.idea/
+.vscode/
+
 # Virtual environments
 .venv
 
 # Large model files
 docker/embedding/bge-large-zh-v1.5/pytorch_model.bin
+
+# Logs
+logs/
+
+# Sensitive config
+conf/app_config.yaml
+
+# Claude Code
+.claude/
