@@ -12,6 +12,7 @@ dependencies = [
     "jieba>=0.42.1",
     "langchain>=1.2.15",
     "langchain-huggingface>=1.2.2",
+    "langchain-openai>=1.2.0",
     "langgraph>=1.1.8",
     "loguru>=0.7.3",
     "omegaconf>=2.3.0",

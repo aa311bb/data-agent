@@ -5,10 +5,11 @@ from qdrant_client.models import Distance, PointStruct, VectorParams
 
 from app.conf.app_config import app_config
 from app.entities.column_info import ColumnInfo
+from app.entities.metric_info import MetricInfo
 
 
-class ColumnQdrantRepository:
-    collection_name = "column_info_collection"
+class MetricQdrantRepository:
+    collection_name: str = "metrci_info_collection"
 
     def __init__(self, client: AsyncQdrantClient):
         self.client = client
@@ -16,7 +17,7 @@ class ColumnQdrantRepository:
     async def ensure_collection(self):
         if not await self.client.collection_exists(self.collection_name):
             await self.client.create_collection(
-                self.collection_name,
+                collection_name=self.collection_name,
                 vectors_config=VectorParams(
                     size=app_config.qdrant.embedding_size, distance=Distance.COSINE
                 ),
@@ -27,25 +28,26 @@ class ColumnQdrantRepository:
         ids: list[str],
         embeddings: list[list[float]],
         payloads: list[ColumnInfo],
-        batch_size: int = 10,
+        batch_size: int = 20,
     ):
-        points: list[PointStruct] = [
-            PointStruct(id=id, vector=embedding, payload=asdict(payload))
-            for id, embedding, payload in zip(ids, embeddings, payloads)
-        ]
-
-        for i in range(0, len(points), batch_size):
+        zipped = list(zip(ids, embeddings, payloads))
+        for i in range(0, len(zipped), batch_size):
+            batch = zipped[i : i + batch_size]
+            batch_points = [
+                PointStruct(id=id, vector=embedding, payload=asdict(payload))
+                for id, embedding, payload in batch
+            ]
             await self.client.upsert(
-                collection_name=self.collection_name, points=points[i : i + batch_size]
+                collection_name=self.collection_name, points=batch_points
             )
 
     async def search(
         self, embedding: list[float], score_threshold=0.6, limit: int = 20
-    ) -> list[ColumnInfo]:
+    ) -> list[MetricInfo]:
         result = await self.client.query_points(
             collection_name=self.collection_name,
             query=embedding,
             limit=limit,
             score_threshold=score_threshold,
         )
-        return [ColumnInfo(**point.payload) for point in result.points]
+        return [MetricInfo(**point.payload) for point in result.points]
