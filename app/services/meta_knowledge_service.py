@@ -1,7 +1,7 @@
 from pathlib import Path
 import uuid
 
-from langchain_huggingface import HuggingFaceEndpointEmbeddings
+from langchain_community.embeddings import DashScopeEmbeddings
 from omegaconf import OmegaConf
 
 from app.conf.meta_config import MetaConfig
@@ -25,14 +25,14 @@ class MetaKnowledgeService:
         meta_mysql_repository: MetaMySQLRepository,
         dw_mysql_repository: DWMySQLRepository,
         column_qdrant_repository: ColumnQdrantRepository,
-        embedding_client: HuggingFaceEndpointEmbeddings,
+        embedding_client: DashScopeEmbeddings,
         value_es_repository: ValueESRepository,
         metric_qdrant_repository: MetricQdrantRepository,
     ):
         self.meta_mysql_repository: MetaMySQLRepository = meta_mysql_repository
         self.dw_mysql_repository: DWMySQLRepository = dw_mysql_repository
         self.column_qdrant_repository: ColumnQdrantRepository = column_qdrant_repository
-        self.embedding_client: HuggingFaceEndpointEmbeddings = embedding_client
+        self.embedding_client: DashScopeEmbeddings = embedding_client
         self.value_es_repository: ValueESRepository = value_es_repository
         self.metric_qdrant_repository: MetricQdrantRepository = metric_qdrant_repository
 

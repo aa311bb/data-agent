@@ -6,7 +6,7 @@ from app.models.table_info import TableInfoMySQL
 
 class TableInfoMapper:
     @staticmethod
-    def to_entiy(table_info_mysql: TableInfoMySQL) -> TableInfo:
+    def to_entity(table_info_mysql: TableInfoMySQL) -> TableInfo:
         return TableInfo(
             id=table_info_mysql.id,
             name=table_info_mysql.name,

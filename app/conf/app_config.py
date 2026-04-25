@@ -43,8 +43,7 @@ class QdrantConfig:
 
 @dataclass
 class EmbeddingConfig:
-    host: str
-    port: int
+    dashscope_api_key: str
     model: str
 
 

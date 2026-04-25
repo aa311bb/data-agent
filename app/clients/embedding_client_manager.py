@@ -1,28 +1,19 @@
 import asyncio
 
-from huggingface_hub import AsyncInferenceClient, InferenceClient
-from langchain_huggingface import HuggingFaceEndpointEmbeddings
+from langchain_community.embeddings import DashScopeEmbeddings
 from app.conf.app_config import EmbeddingConfig, app_config
 
 
 class EmbeddingClientManager:
     def __init__(self, config: EmbeddingConfig):
-        self.client: HuggingFaceEndpointEmbeddings | None = None
+        self.client: DashScopeEmbeddings | None = None
         self.config = config
 
-    def _get_url(self):
-        return f"http://{self.config.host}:{self.config.port}"
-
     def init(self):
-        url = self._get_url()
-        embeddings = HuggingFaceEndpointEmbeddings.model_construct(
-            model=url,
-            repo_id=url,
-            task="feature-extraction",
+        self.client = DashScopeEmbeddings(
+            model=self.config.model,
+            dashscope_api_key=self.config.dashscope_api_key,
         )
-        embeddings.client = InferenceClient(model=url)
-        embeddings.async_client = AsyncInferenceClient(model=url)
-        self.client = embeddings
 
 
 embedding_client_manager = EmbeddingClientManager(app_config.embedding)
@@ -34,7 +25,7 @@ if __name__ == "__main__":
     text = "What is deep learning"
 
     async def test():
-        query_resul = await client.aembed_query(text)
-        print(query_resul[:3])
+        query_result = await client.aembed_query(text)
+        print(query_result[:3])
 
     asyncio.run(test())
